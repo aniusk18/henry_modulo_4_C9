@@ -1,3 +1,4 @@
+process.removeAllListeners('warning');
 import dotenv from 'dotenv';
 import readline from "readline";
 import { classificationChain } from './src/chains/classificationChain.js';
@@ -17,19 +18,21 @@ async function main() {
   });
 
   while (true) {
+
     const question = await new Promise(resolve => {
-      rl.question("\nEnter your question (or 'exit' to quit): ", resolve);
+      rl.question("\nIngrese su pregunta: (o 'exit' para cerrar el programa): ", resolve);
     });
 
     if (question.toLowerCase() === 'exit') break;
 
     const questionType = await classificationChain.invoke({ question });
-    console.log(`\n📋 Question Category: ${questionType.toUpperCase()}`);
+    const [language, classification] = questionType.split(':');
+    console.log(`\n📋 ${language === 'es' ? 'Categoría de Pregunta:' : 'Question Category'} ${classification.toUpperCase()}`);
     const response = await (questionType === 'news' ? 
-      newsChain.invoke({ question }) : 
-      generalChain.invoke({ question }));
+      newsChain.invoke({ question, language }) : 
+      generalChain.invoke({ question, language }));
 
-      console.log("\n💜 Answer:", response);
+      console.log(`\n💜 ${language === 'es' ? 'Respuesta:' : 'Answer'} :`, response);
   }
 
   rl.close();

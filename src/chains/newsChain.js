@@ -18,8 +18,16 @@ export async function setupNewsChain() {
   
   const newsContext = splits.map(split => split.pageContent).join('\n\n');
 
+  // const newsPrompt = ChatPromptTemplate.fromTemplate(
+  //   `Based on these news articles:\n${newsContext}\n\nAnswer this question: {question}`
+  // );
+
   const newsPrompt = ChatPromptTemplate.fromTemplate(
-    `Based on these news articles:\n${newsContext}\n\nAnswer this question: {question}`
+    `Language: {language}
+     Based on these news articles:
+     ${newsContext}
+     
+     Answer this question in the same language as the question: {question}`
   );
 
   return RunnableSequence.from([

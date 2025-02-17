@@ -4,8 +4,11 @@ import { RunnableSequence } from "@langchain/core/runnables";
 import { model } from '../config/modelConfig.js';
 
 const classificationPrompt = ChatPromptTemplate.fromTemplate(
-  `Classify if this is a news-related or general question. Answer only with "news" or "general":\n{question}`
+  `First detect the language (respond only with 'es' or 'en'), then classify if this is news or general. 
+   Answer in format: "language:classification"
+   Question: {question}`
 );
+
 
 export const classificationChain = RunnableSequence.from([
   classificationPrompt,
